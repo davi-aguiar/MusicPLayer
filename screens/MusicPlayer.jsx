@@ -1,22 +1,50 @@
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Dimensions,Image} from 'react-native'
-import React from 'react'
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Dimensions,Image, FlatList, Animated} from 'react-native'
+import React, {useEffect, useState,useRef}from 'react'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import Slider from '@react-native-community/slider';
-
+import songs from '../model/Data';
 
 const{width, height} = Dimensions.get('window');
 
 
 const MusicPlayer = () => {
+
+  const scrollX = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    scrollX.addListener(({value}) =>{
+      console.log(value);
+    })
+    }, [])
+
+  const renderSongs =({item,index})=>{
+    return(
+      <View style={style.mainimageWrapper}>
+
+     <View style={[style.imageWrapper,style.elevation]}>
+      <Image
+        source={item.artwork}
+        style={style.musicImage}
+      />
+     </View>
+      </View>
+    )
+  }
+  
   return (
     <SafeAreaView style={style.container}> 
     <View style ={style.maincontainer}>
-      
-      <View style={[style.imageWrapper, style.elevation]}>
-        <Image source={require('../assets/img/img1.jpg')}
-          style={style.musicImage}
-        />
-      </View>
+
+    <FlatList
+        renderItem={renderSongs}
+        data={songs}
+        keyExtractor={item=>item.id}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator = {false}
+        scrollEventThrottle={16}
+        onScroll={()=>{}}
+      />
 
       {/*SONG CONTENT */}
       <View>
@@ -29,15 +57,38 @@ const MusicPlayer = () => {
           value = {10}
           minimumValue={0}
           maximumValue={100}
-          thumbTintColor='#FFD369'
-          minimumTrackTintColor="#FFD369"
-          maximumTrackTintColor="#fff"
+          thumbTintColor='#1db954'
+          minimumTrackTintColor="#1db954"
+          maximumTrackTintColor="#1db954"
           onSlidingComplete={()=>{}}
         />
       </View>
 
+        <View style={style.progressLevelDuration}> 
+            <Text style={style.progressLabelText}>00:00</Text>
+            <View style={{flex:1}}/>
+            <Text style={style.progressLabelText}>00:00</Text>
+        <View/>
 
+        </View>
       {/* MUSIC CONTROLS */}
+      <View style={style.musicControlsContainer}>
+
+        <TouchableOpacity onPress={()=>{}}>
+          <Ionicons name= "play-skip-back-outline" size={35} color="#1db954"/>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={()=>{}}>
+          <Ionicons name= "pause-circle-outline" size={75} color="#1db954"/>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={()=>{}}>
+          <Ionicons name= "play-skip-forward-outline" size={35} color="#1db954"/>
+        </TouchableOpacity>
+
+
+      </View>
+
     </View>
     <View style={style.bottomContainer}> 
       <View style={style.bottomIconWrapper}>
@@ -56,9 +107,13 @@ const MusicPlayer = () => {
       <TouchableOpacity onPress={()=>{}}>
         <Ionicons name= "ellipsis-horizontal" size={30} color="#888888"/>
       </TouchableOpacity>
+
+      </View>
     </View>
-    </View>
+   
+  
     </SafeAreaView>
+   
     
   )
 }
@@ -91,10 +146,17 @@ const style = StyleSheet.create({
       width:'80%'
     },
 
+    mainimageWrapper:{
+      width: width,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+
     imageWrapper:{
       width: 300,
       height: 340,
-      marginBottom: 25
+      marginBottom: 20,
+      marginTop: 20,
     },
 
     musicImage:{
@@ -131,9 +193,29 @@ const style = StyleSheet.create({
     },
 
     progressBar:{
-      width: 300,
+      width: 350,
       height: 40,
       marginTop: 25,
-      flexDirection: 'row'
+      flexDirection: 'row',
+    },
+
+    progressLevelDuration:{
+      width: 300,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+
+    progressLabelText:{
+      color: "#fff",
+      fontWeight: '500',
+    },
+
+    musicControlsContainer:{
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      width: '60%',
+      marginTop: 10,
+      marginBottom: 100,
     }
 });
